@@ -63,7 +63,7 @@ public:
     int64_t ToInt64() const;
 
     // Math functions:
-    static BigInt Pow(const BigInt& base, int64_t exp);
+    static BigInt Pow(const BigInt& base, BigInt& exp);
     bool IsPrime() const;
     // computes the inverse of a modulo n 
     static BigInt InverseOfModuloN(const BigInt& a, const BigInt& n);

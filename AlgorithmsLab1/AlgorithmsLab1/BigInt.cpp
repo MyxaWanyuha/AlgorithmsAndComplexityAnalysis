@@ -620,7 +620,7 @@ int64_t BigInt::ToInt64() const
     return std::stoll(this->ToString());
 }
 
-BigInt BigInt::Pow(const BigInt& base, int64_t exp)
+BigInt BigInt::Pow(const BigInt& base, BigInt& exp)
 {
     if (exp < 0)
     {
@@ -638,10 +638,10 @@ BigInt BigInt::Pow(const BigInt& base, int64_t exp)
     BigInt result = base, result_odd = 1;
     while (exp > 1)
     {
-        if (exp % 2)
+        if (exp % 2 != 0)
             result_odd *= result;
         result *= result;
-        exp /= 2;
+        exp /= BigInt(2);
     }
 
     return result * result_odd;

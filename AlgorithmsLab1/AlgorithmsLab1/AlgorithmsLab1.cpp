@@ -371,7 +371,8 @@ void test()
 	{
 		errorNum++;
 		BigInt x(11);
-		x = BigInt::Pow(x, 2);
+		auto two = BigInt(2);
+		x = BigInt::Pow(x, two);
 		if (x != 121)
 			std::cout << error + std::to_string(errorNum) << '\n';
 	}

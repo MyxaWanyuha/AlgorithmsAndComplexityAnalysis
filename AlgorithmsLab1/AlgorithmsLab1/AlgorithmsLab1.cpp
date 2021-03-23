@@ -397,6 +397,13 @@ void test()
 	}
 }
 
+enum class Input : int32_t
+{
+	GeneratePublicKeys = 1,
+	Encode = 2,
+	Decode = 3
+};
+
 int main()
 {
 	test();
@@ -405,55 +412,84 @@ int main()
 	std::string EncodeMessageFileName = "EncodeMessage.txt";
 	std::string DecodeMessageFileName = "DecodeMessage.txt";
 
-	RSA John_rsa(19, 23);
-	// John
+	int32_t input = 0;
+	RSA RSAWithPrivateKey(19, 23);
+	do
 	{
-		std::ofstream John_ofs_PublicKey(PublicKeyFileName);
-		John_ofs_PublicKey << John_rsa.GetPublicKey().first << " " << John_rsa.GetPublicKey().second;
-	}
-	// Mary
-	{
-		std::ifstream Mary_ifs_PublicKey(PublicKeyFileName);
-		BigInt e, n;
-		if (Mary_ifs_PublicKey.is_open())
+		system("cls");
+		std::cout << "1. Generate public key (PublicKey.txt)\n"
+			<< "2. EncodeMessage\n"
+			<< "3. DecodeMessage\n"
+			<< "0. Exit\n";
+		if ((int32_t)Input::GeneratePublicKeys == input)
 		{
-			std::string line;
-			std::getline(Mary_ifs_PublicKey, line);
-			std::istringstream iss(line);
-			if (!(iss >> e >> n))
-				throw std::runtime_error("can't read public key");
+			std::ofstream OFSPublicKey(PublicKeyFileName);
+			OFSPublicKey << RSAWithPrivateKey.GetPublicKey().first << " " << RSAWithPrivateKey.GetPublicKey().second;
+			OFSPublicKey.close();
 		}
-		else
-			throw std::runtime_error(PublicKeyFileName + " not found");
-
-		std::string message;
-		std::ifstream Mary_ifs_Message(MessageFileName);
-		if (Mary_ifs_Message.is_open())
-			message.assign((std::istreambuf_iterator<char>(Mary_ifs_Message)), (std::istreambuf_iterator<char>()));
-		else
-			throw std::runtime_error(MessageFileName + " not found");
-
-		auto encodeText = RSA::Endoce(message, e, n);
-		std::ofstream Mary_of(EncodeMessageFileName);
-		for (auto& str : encodeText)
-			Mary_of << str << '\n';
-	}
-	// John
-	{
-		std::ifstream John_if(EncodeMessageFileName);
-		std::vector<std::string> encodeText;
-		if (John_if.is_open())
+		else if ((int32_t)Input::Encode == input)
 		{
-			std::string line;
-			while (std::getline(John_if, line))
-				encodeText.push_back(line);
-		}
-		else
-			throw std::runtime_error(EncodeMessageFileName + " not found");
+			std::ifstream IFSPublicKey(PublicKeyFileName);
+			BigInt e, n;
+			if (IFSPublicKey.is_open())
+			{
+				std::string line;
+				std::getline(IFSPublicKey, line);
+				std::istringstream iss(line);
+				if (!(iss >> e >> n))
+				{
+					std::cout << "can't read public key\n";
+				}
+				IFSPublicKey.close();
+			}
+			else
+			{
+				std::cout << PublicKeyFileName + " not found\n";
+				continue;
+			}
+			std::string message;
+			std::ifstream IFSMessage(MessageFileName);
+			if (IFSMessage.is_open())
+			{
+				message.assign((std::istreambuf_iterator<char>(IFSMessage)), (std::istreambuf_iterator<char>()));
+				IFSMessage.close();
+			}
+			else
+			{
+				std::cout << MessageFileName + " not found\n";
+				IFSMessage.close();
+				continue;
+			}
 
-		auto dencodeText = John_rsa.Dedoce(encodeText);
-		std::ofstream John_of(DecodeMessageFileName);
-		John_of << dencodeText;
-	}
+			auto encodeText = RSA::Endoce(message, e, n);
+			std::ofstream OFEncodeMessage(EncodeMessageFileName);
+			for (auto& str : encodeText)
+				OFEncodeMessage << str << '\n';
+			OFEncodeMessage.close();
+		}
+		else if ((int32_t)Input::Decode == input)
+		{
+			std::ifstream EncodeIFS(EncodeMessageFileName);
+			std::vector<std::string> encodeText;
+			if (EncodeIFS.is_open())
+			{
+				std::string line;
+				while (std::getline(EncodeIFS, line))
+					encodeText.push_back(line);
+			}
+			else
+			{
+				std::cout << EncodeMessageFileName + " not found\n";
+				EncodeIFS.close();
+				continue;
+			}
+			EncodeIFS.close();
+			auto decodeText = RSAWithPrivateKey.Dedoce(encodeText);
+			std::ofstream John_of(DecodeMessageFileName);
+			John_of << decodeText;
+		}
+		
+	} while (std::cout << "Input: " && std::cin >> input && input);
+
 	return 0;
 }

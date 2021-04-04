@@ -3,7 +3,7 @@
 
 int main()
 {
-    std::vector<int32_t> arr{ 5, 4, 7, 2, 11 };
+    std::vector<int32_t> arr{ 5, 4, 11, 7, 2, 11 };
 
     TreeSort<int32_t>::treeSort(arr);
 

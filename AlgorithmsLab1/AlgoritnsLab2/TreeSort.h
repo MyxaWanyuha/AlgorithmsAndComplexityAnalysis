@@ -11,14 +11,12 @@ public:
 
         const auto len = arr.size();
         for (int i = 1; i < len; i++)
-        {
             root = insert(root, arr[i]);
-        }
-
-        int i = 0;
+        
+        uint32_t i = 0;
         storeSorted(root, arr, i);
+        delete root;
     }
-
 private:
     struct Node
     {
@@ -27,9 +25,16 @@ private:
         T key;
         Node* left = nullptr; 
         Node* right = nullptr;
+        ~Node()
+        {
+            if (left)
+                delete left;
+            if (right)
+                delete right;
+        }
     };
 
-    static void storeSorted(Node* root, std::vector<T>& arr, int& i)
+    static void storeSorted(Node* root, std::vector<T>& arr, uint32_t& i)
     {
         if (root != nullptr)
         {
@@ -41,17 +46,14 @@ private:
 
     static Node* insert(Node* node, T key)
     {
-        /* If the tree is empty, return a new Node */
         if (node == nullptr) 
             return new Node(key);
 
-        /* Otherwise, recur down the tree */
         if (key < node->key)
             node->left = insert(node->left, key);
         else if (key > node->key)
             node->right = insert(node->right, key);
 
-        /* return the (unchanged) Node pointer */
         return node;
     }
 };

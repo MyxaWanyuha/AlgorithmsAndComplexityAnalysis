@@ -1,0 +1,7 @@
+<experiments>
+<experiment name='Tree'>
+<nodes name='Test'
+ minElement='33' maxElement='126' startLength='0' diff='1' maxLength='150' repeat='1'>
+</nodes>
+</experiment>
+</experiments>

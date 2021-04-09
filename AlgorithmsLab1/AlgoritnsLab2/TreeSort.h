@@ -1,60 +1,58 @@
 #pragma once
-#include <string>
+#include <vector>
+template<typename T>
 class TreeSort
 {
 public:
-    static uint32_t treeSort(std::string& arr)
+    static void treeSort(std::vector<T>& arr)
     {
-        if (arr.size() < 2) return arr.size();
+        Node* root = nullptr;
+        root = insert(root, arr[0]);
 
-        uint32_t count = 0;
-        Node* root = insert(root, arr[0], count);
+        const auto len = arr.size();
+        for (int i = 1; i < len; i++)
+            root = insert(root, arr[i]);
 
-        for (int i = 1; i < arr.size(); i++)
-            root = insert(root, arr[i], count);
-
-        int i = 0;
-        storeSorted(root, arr, i, count);
+        uint32_t i = 0;
+        storeSorted(root, arr, i);
         delete root;
-
-        return count;
     }
 private:
     struct Node
     {
-        Node(char item)
+        Node(T item)
             : key(item) {};
-        ~Node()
-        {
-            delete left;
-            delete right;
-        }
-        char key;
+        T key;
         Node* left = nullptr;
         Node* right = nullptr;
+        ~Node()
+        {
+            if (left)
+                delete left;
+            if (right)
+                delete right;
+        }
     };
 
-    static void storeSorted(Node* root, std::string& arr, int& i, uint32_t& count)
+    static void storeSorted(Node* root, std::vector<T>& arr, uint32_t& i)
     {
-        ++count;
         if (root != nullptr)
         {
-            storeSorted(root->left, arr, i, count);
+            storeSorted(root->left, arr, i);
             arr[i++] = root->key;
-            storeSorted(root->right, arr, i, count);
+            storeSorted(root->right, arr, i);
         }
     }
 
-    static Node* insert(Node* node, char key, uint32_t& count)
+    static Node* insert(Node* node, T key)
     {
-        ++count;
-        if (node == nullptr) 
+        if (node == nullptr)
             return new Node(key);
 
         if (key < node->key)
-            node->left = insert(node->left, key, count);
+            node->left = insert(node->left, key);
         else if (key > node->key)
-            node->right = insert(node->right, key, count);
+            node->right = insert(node->right, key);
 
         return node;
     }

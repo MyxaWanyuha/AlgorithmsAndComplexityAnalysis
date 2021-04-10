@@ -141,7 +141,6 @@
   <ItemGroup>
     <ClCompile Include="AlgoritnsLab2.cpp" />
     <ClCompile Include="pugixml.cpp" />
-    <ClCompile Include="TreeSort.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pugiconfig.hpp" />

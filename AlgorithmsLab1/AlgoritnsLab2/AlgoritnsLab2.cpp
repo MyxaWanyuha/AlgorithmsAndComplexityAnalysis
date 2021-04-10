@@ -7,7 +7,6 @@
 
 struct ExperimentNode
 {
-<<<<<<< HEAD
     ExperimentNode(std::string name, int minElement, int maxElement, 
         int startLength, int maxLength, int diff, int repeat) 
         :name(name), minElement(minElement), maxElement(maxElement), 
@@ -21,9 +20,6 @@ struct ExperimentNode
     int diff;
     int repeat;
 };
-=======
-    std::vector<int32_t> arr{ 5, 4, 11, 7, 2, 11 };
->>>>>>> a5d95d9e29be46534b658b982ccb90c3d4e5a4e2
 
 std::vector<ExperimentNode> readXML(const char* source)
 {
@@ -50,7 +46,7 @@ std::string GenerateString(ExperimentNode& experiment, int length)
 {
     std::string res;
     for (int i = 0; i < length; ++i)
-        res += experiment.minElement + (rand() % (experiment.minElement - experiment.minElement + 1));
+        res += experiment.minElement + (rand() % (experiment.maxElement - experiment.minElement + 1));
     return res;
 }
 

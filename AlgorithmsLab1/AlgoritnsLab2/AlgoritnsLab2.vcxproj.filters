@@ -18,9 +18,6 @@
     <ClCompile Include="AlgoritnsLab2.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="TreeSort.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="pugixml.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>

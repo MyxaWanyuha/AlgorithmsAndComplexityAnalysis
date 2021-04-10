@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
-class TreeSort
+class TreeSortClass
 {
 public:
-    static uint32_t treeSort(std::string& arr)
+    uint32_t operator()(std::string& arr)
     {
         if (arr.size() < 2) return arr.size();
 
@@ -58,3 +58,5 @@ private:
         return node;
     }
 };
+
+TreeSortClass TreeSort;

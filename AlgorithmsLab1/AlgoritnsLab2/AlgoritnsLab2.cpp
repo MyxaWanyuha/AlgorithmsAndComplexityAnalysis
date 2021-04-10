@@ -67,7 +67,7 @@ int main()
             for (int j = experiment.startLength; j <= experiment.maxLength; j += experiment.diff)
             {
                 auto s = GenerateString(experiment, j);
-                of << j << ';' << TreeSort::treeSort(s) << '\n';
+                of << j << ';' << TreeSort(s) << '\n';
             }
         of.close();
     }

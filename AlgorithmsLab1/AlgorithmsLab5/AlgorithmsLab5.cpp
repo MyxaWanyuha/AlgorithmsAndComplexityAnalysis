@@ -1,49 +1,25 @@
-﻿// AlgorithmsLab5.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <iostream>
-
-double det(double** arr, uint32_t N)
-{
-    if (N == 1)
-        return arr[0][0];
-    if (N == 2)
-        return arr[0][0] * arr[1][1] - arr[0][1] * arr[1][0];
-    if (N < 1)
-        return nan("1");  // Некорректная матрица
-
-    double** subT = new double* [N - 1];  // Субматрица как набор ссылок на исходную матрицу
-                                          // Массив ссылок на столбцы субматрицы
-    double det__ = 0.;
-    int s = 1;                   // Знак минора
-    for (int i = 0; i < N; i++)  // Разложение по первому столбцу
-    {
-        int sub_j = 0;
-        for (int j = 0; j < N; j++)         // Заполнение субматрицы ссылками на исходные столбцы
-            if (i != j)                     // исключить i строку
-                subT[sub_j++] = arr[j] + 1;   // здесь + 1 исключает первый столбец
-
-        det__ = det__ + s * arr[i][0] * det(subT, N - 1);
-        s = -s;
-    };
-    delete[] subT;
-    return det__;
-};
+﻿#include <iostream>
+#include "MatrixXnX.h"
 
 int main()
 {
-    double* a1 = new double[] {2, 4, 3};
-    double* a2 = new double[] {5, 7, 8};
-    double* a3 = new double[] {6, 9, 1};
-    double** m = new double*[] {a1, a2, a3};
+    MatrixXnX<int> m(3);
+    m.SetElement(0, 0, 2);
+    m.SetElement(0, 1, 4);
+    m.SetElement(0, 2, 3);
+    m.SetElement(1, 0, 5);
+    m.SetElement(1, 1, 7);
+    m.SetElement(1, 2, 8);
+    m.SetElement(2, 0, 6);
+    m.SetElement(2, 1, 9);
+    m.SetElement(2, 2, 1);
 
-    std::cout << det(m, 3) << ' ' << 51;
-    
-    delete[] a1;
-    delete[] a2;
-    delete[] a3;
-    delete[]  m;
+    std::cout << m << '\n';
+    std::cout << m.Determinant();
+
+    return 0;
 }
+
 /*
 1. Написать функцию вычисления определителя квадратной матрицы, раскрывая определитель по строке.
 

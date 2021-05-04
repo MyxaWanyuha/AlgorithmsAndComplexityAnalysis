@@ -57,18 +57,18 @@ public:
 
 	uint32_t GetDim() const noexcept { return dim; }
 
-	MatrixXnX<T> GetMatrixWithout_xStr_yCol(MatrixXnX<T>& matrix, uint32_t x, uint32_t y)
+	MatrixXnX<T> GetMatrixWithoutStrCol(MatrixXnX<T>& matrix, uint32_t str, uint32_t col)
 	{
 		MatrixXnX<T> submatrix(matrix.GetDim() - 1);
 		uint32_t subi = 0;
 		for (uint32_t i = 0; i < matrix.GetDim(); i++)
 		{
 			uint32_t subj = 0;
-			if (i == y) continue;
+			if (i == str) continue;
 
 			for (uint32_t j = 0; j < matrix.GetDim(); j++)
 			{
-				if (j == x) continue;
+				if (j == col) continue;
 				submatrix.SetElement(subi, subj, matrix.element(i, j));
 				subj++;
 			}
@@ -89,7 +89,7 @@ public:
 		int8_t signMultiplier = 1;
 		for (uint32_t i = 0; i < GetDim(); i++)
 		{
-			auto p = GetMatrixWithout_xStr_yCol(*this, i, 0);
+			auto p = GetMatrixWithoutStrCol(*this, 0, i);
 			result += signMultiplier * element(0, i) * p.Determinant();
 			signMultiplier *= -1;
 		}

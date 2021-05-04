@@ -15,6 +15,8 @@ int main()
     m.SetElement(2, 2, 1);
 
     std::cout << m << '\n';
+    std::cout <<
+        m.GetMatrixWithoutStrCol(m, 1, 0) << '\n';
     std::cout << m.Determinant();
 
     return 0;

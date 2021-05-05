@@ -38,3 +38,5 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const MatrixXnX& m);
+
+bool operator==(const MatrixXnX& m1, const MatrixXnX& m2);

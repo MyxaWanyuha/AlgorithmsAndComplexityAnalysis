@@ -25,6 +25,7 @@ MatrixXnX& MatrixXnX::operator=(const MatrixXnX& m)
 {
 	delete[] elems;
 	dim = m.dim;
+	elems = new double[static_cast<uint64_t>(dim) * dim];
 	Copy(m);
 	return *this;
 }
@@ -139,4 +140,15 @@ std::ostream& operator<<(std::ostream& os, const MatrixXnX& m)
 		os << '\n';
 	}
 	return os;
+}
+
+bool operator==(const MatrixXnX& m1, const MatrixXnX& m2)
+{
+	if (m1.GetDim() != m2.GetDim()) return false;
+
+	for (uint32_t i = 0; i < m1.GetDim(); ++i)
+		for (uint32_t j = 0; j < m1.GetDim(); ++j)
+			if (m1.Element(i, j) != m2.Element(i, j))
+				return false;
+	return true;
 }

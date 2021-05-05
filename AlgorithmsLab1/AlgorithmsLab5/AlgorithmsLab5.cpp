@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include "MatrixXnX.h"
 
-
 int main()
 {
     std::cout << "Enter the dimension of the quadratic system of equations: ";
@@ -13,17 +12,17 @@ int main()
 
     for(uint32_t i = 0; i < dim; ++i)
     {
-        double e;
+        double input;
         std::cout << "equation " << i << ":\n";
         for (uint32_t j = 0; j < dim; ++j)
         {
             std::cout << 'x' << j << " = ";
-            std::cin >> e;
-            matr.SetElement(i, j, e);
+            std::cin >> input;
+            matr.SetElement(i, j, input);
         }
         std::cout << "free member " << i << " = ";
-        std::cin >> e;
-        freeMembers[i] = e;
+        std::cin >> input;
+        freeMembers[i] = input;
     }
     std::cout << '\n';
 
@@ -31,7 +30,7 @@ int main()
     if (invMatr.GetDim() == 0)
     {
         std::cout << "no solutions\n";
-        return 1;
+        return 0;
     }
 
     auto vectorUnknowns = invMatr * freeMembers;
@@ -39,21 +38,3 @@ int main()
         std::cout << 'x' << i << " = " << vectorUnknowns[i] << '\n';
     return 0;
 }
-
-/*
-1. Написать функцию вычисления определителя квадратной матрицы, раскрывая определитель по строке.
-
-2. Написать функцию вычисления обратной матрицы, с использованием алгебраических дополнений.
-
-3. Написать функцию умножения матрицы на вектор.
-
-4. Решить квадратную систему линейных уравнений методом обратной матрицы.
-
-Функция выдает ответы :
-
-– решение в случае его единственности;
-
-– нет решений или решений бесконечно много.
-
-5. Определить сложность алгоритма.
-*/

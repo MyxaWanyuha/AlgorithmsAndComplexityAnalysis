@@ -1,24 +1,24 @@
 ﻿#include <iostream>
 #include "MatrixXnX.h"
 
+
 int main()
 {
-    MatrixXnX<int> m(3);
-    m.SetElement(0, 0, 2);
-    m.SetElement(0, 1, 4);
+    MatrixXnX m(3);
+    m.SetElement(0, 0, 1);
+    m.SetElement(0, 1, 2);
     m.SetElement(0, 2, 3);
-    m.SetElement(1, 0, 5);
-    m.SetElement(1, 1, 7);
-    m.SetElement(1, 2, 8);
-    m.SetElement(2, 0, 6);
-    m.SetElement(2, 1, 9);
-    m.SetElement(2, 2, 1);
+    m.SetElement(1, 0, 4);
+    m.SetElement(1, 1, 34);
+    m.SetElement(1, 2, 6);
+    m.SetElement(2, 0, 7);
+    m.SetElement(2, 1, 12);
+    m.SetElement(2, 2, 45);
 
     std::cout << m << '\n';
-    std::cout <<
-        m.GetMatrixWithoutStrCol(m, 1, 0) << '\n';
-    std::cout << m.Determinant();
+    std::cout << m.Determinant() << '\n';
 
+    std::cout << m.InverseMatrix() << '\n';
     return 0;
 }
 

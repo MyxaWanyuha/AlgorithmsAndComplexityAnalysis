@@ -191,7 +191,7 @@ PUGI__NS_BEGIN
 		free(ptr);
 	}
 
-	template <typename T>
+	template <typename doubl>
 	struct xml_memory_management_function_storage
 	{
 		static allocation_function allocate;
@@ -200,8 +200,8 @@ PUGI__NS_BEGIN
 
 	// Global allocation functions are stored in class statics so that in header mode linker deduplicates them
 	// Without a template<> we'll get multiple definitions of the same static
-	template <typename T> allocation_function xml_memory_management_function_storage<T>::allocate = default_allocate;
-	template <typename T> deallocation_function xml_memory_management_function_storage<T>::deallocate = default_deallocate;
+	template <typename doubl> allocation_function xml_memory_management_function_storage<doubl>::allocate = default_allocate;
+	template <typename doubl> deallocation_function xml_memory_management_function_storage<doubl>::deallocate = default_deallocate;
 
 	typedef xml_memory_management_function_storage<int> xml_memory;
 PUGI__NS_END
@@ -259,14 +259,14 @@ PUGI__NS_END
 
 // auto_ptr-like object for exception recovery
 PUGI__NS_BEGIN
-	template <typename T> struct auto_deleter
+	template <typename doubl> struct auto_deleter
 	{
-		typedef void (*D)(T*);
+		typedef void (*D)(doubl*);
 
-		T* data;
+		doubl* data;
 		D deleter;
 
-		auto_deleter(T* data_, D deleter_): data(data_), deleter(deleter_)
+		auto_deleter(doubl* data_, D deleter_): data(data_), deleter(deleter_)
 		{
 		}
 
@@ -275,9 +275,9 @@ PUGI__NS_BEGIN
 			if (data) deleter(data);
 		}
 
-		T* release()
+		doubl* release()
 		{
-			T* result = data;
+			doubl* result = data;
 			data = 0;
 			return result;
 		}
@@ -3578,24 +3578,24 @@ PUGI__NS_BEGIN
 		return encoding_utf8;
 	}
 
-	template <typename D, typename T> PUGI__FN size_t convert_buffer_output_generic(typename T::value_type dest, const char_t* data, size_t length, D, T)
+	template <typename D, typename doubl> PUGI__FN size_t convert_buffer_output_generic(typename doubl::value_type dest, const char_t* data, size_t length, D, doubl)
 	{
 		PUGI__STATIC_ASSERT(sizeof(char_t) == sizeof(typename D::type));
 
-		typename T::value_type end = D::process(reinterpret_cast<const typename D::type*>(data), length, dest, T());
+		typename doubl::value_type end = D::process(reinterpret_cast<const typename D::type*>(data), length, dest, doubl());
 
 		return static_cast<size_t>(end - dest) * sizeof(*dest);
 	}
 
-	template <typename D, typename T> PUGI__FN size_t convert_buffer_output_generic(typename T::value_type dest, const char_t* data, size_t length, D, T, bool opt_swap)
+	template <typename D, typename doubl> PUGI__FN size_t convert_buffer_output_generic(typename doubl::value_type dest, const char_t* data, size_t length, D, doubl, bool opt_swap)
 	{
 		PUGI__STATIC_ASSERT(sizeof(char_t) == sizeof(typename D::type));
 
-		typename T::value_type end = D::process(reinterpret_cast<const typename D::type*>(data), length, dest, T());
+		typename doubl::value_type end = D::process(reinterpret_cast<const typename D::type*>(data), length, dest, doubl());
 
 		if (opt_swap)
 		{
-			for (typename T::value_type i = dest; i != end; ++i)
+			for (typename doubl::value_type i = dest; i != end; ++i)
 				*i = endian_swap(*i);
 		}
 
@@ -4829,7 +4829,7 @@ PUGI__NS_BEGIN
 	}
 
 #ifndef PUGIXML_NO_STL
-	template <typename T> struct xml_stream_chunk
+	template <typename doubl> struct xml_stream_chunk
 	{
 		static xml_stream_chunk* create()
 		{
@@ -4859,21 +4859,21 @@ PUGI__NS_BEGIN
 		xml_stream_chunk* next;
 		size_t size;
 
-		T data[xml_memory_page_size / sizeof(T)];
+		doubl data[xml_memory_page_size / sizeof(doubl)];
 	};
 
-	template <typename T> PUGI__FN xml_parse_status load_stream_data_noseek(std::basic_istream<T>& stream, void** out_buffer, size_t* out_size)
+	template <typename doubl> PUGI__FN xml_parse_status load_stream_data_noseek(std::basic_istream<doubl>& stream, void** out_buffer, size_t* out_size)
 	{
-		auto_deleter<xml_stream_chunk<T> > chunks(0, xml_stream_chunk<T>::destroy);
+		auto_deleter<xml_stream_chunk<doubl> > chunks(0, xml_stream_chunk<doubl>::destroy);
 
 		// read file to a chunk list
 		size_t total = 0;
-		xml_stream_chunk<T>* last = 0;
+		xml_stream_chunk<doubl>* last = 0;
 
 		while (!stream.eof())
 		{
 			// allocate new chunk
-			xml_stream_chunk<T>* chunk = xml_stream_chunk<T>::create();
+			xml_stream_chunk<doubl>* chunk = xml_stream_chunk<doubl>::create();
 			if (!chunk) return status_out_of_memory;
 
 			// append chunk to list
@@ -4881,8 +4881,8 @@ PUGI__NS_BEGIN
 			else chunks.data = last = chunk;
 
 			// read data to chunk
-			stream.read(chunk->data, static_cast<std::streamsize>(sizeof(chunk->data) / sizeof(T)));
-			chunk->size = static_cast<size_t>(stream.gcount()) * sizeof(T);
+			stream.read(chunk->data, static_cast<std::streamsize>(sizeof(chunk->data) / sizeof(doubl)));
+			chunk->size = static_cast<size_t>(stream.gcount()) * sizeof(doubl);
 
 			// read may set failbit | eofbit in case gcount() is less than read length, so check for other I/O errors
 			if (stream.bad() || (!stream.eof() && stream.fail())) return status_io_error;
@@ -4900,7 +4900,7 @@ PUGI__NS_BEGIN
 
 		char* write = buffer;
 
-		for (xml_stream_chunk<T>* chunk = chunks.data; chunk; chunk = chunk->next)
+		for (xml_stream_chunk<doubl>* chunk = chunks.data; chunk; chunk = chunk->next)
 		{
 			assert(write + chunk->size <= buffer + total);
 			memcpy(write, chunk->data, chunk->size);
@@ -4916,10 +4916,10 @@ PUGI__NS_BEGIN
 		return status_ok;
 	}
 
-	template <typename T> PUGI__FN xml_parse_status load_stream_data_seek(std::basic_istream<T>& stream, void** out_buffer, size_t* out_size)
+	template <typename doubl> PUGI__FN xml_parse_status load_stream_data_seek(std::basic_istream<doubl>& stream, void** out_buffer, size_t* out_size)
 	{
 		// get length of remaining data in stream
-		typename std::basic_istream<T>::pos_type pos = stream.tellg();
+		typename std::basic_istream<doubl>::pos_type pos = stream.tellg();
 		stream.seekg(0, std::ios::end);
 		std::streamoff length = stream.tellg() - pos;
 		stream.seekg(pos);
@@ -4934,10 +4934,10 @@ PUGI__NS_BEGIN
 		size_t max_suffix_size = sizeof(char_t);
 
 		// read stream data into memory (guard against stream exceptions with buffer holder)
-		auto_deleter<void> buffer(xml_memory::allocate(read_length * sizeof(T) + max_suffix_size), xml_memory::deallocate);
+		auto_deleter<void> buffer(xml_memory::allocate(read_length * sizeof(doubl) + max_suffix_size), xml_memory::deallocate);
 		if (!buffer.data) return status_out_of_memory;
 
-		stream.read(static_cast<T*>(buffer.data), static_cast<std::streamsize>(read_length));
+		stream.read(static_cast<doubl*>(buffer.data), static_cast<std::streamsize>(read_length));
 
 		// read may set failbit | eofbit in case gcount() is less than read_length (i.e. line ending conversion), so check for other I/O errors
 		if (stream.bad() || (!stream.eof() && stream.fail())) return status_io_error;
@@ -4947,12 +4947,12 @@ PUGI__NS_BEGIN
 		assert(actual_length <= read_length);
 
 		*out_buffer = buffer.release();
-		*out_size = actual_length * sizeof(T);
+		*out_size = actual_length * sizeof(doubl);
 
 		return status_ok;
 	}
 
-	template <typename T> PUGI__FN xml_parse_result load_stream_impl(xml_document_struct* doc, std::basic_istream<T>& stream, unsigned int options, xml_encoding encoding, char_t** out_buffer)
+	template <typename doubl> PUGI__FN xml_parse_result load_stream_impl(xml_document_struct* doc, std::basic_istream<doubl>& stream, unsigned int options, xml_encoding encoding, char_t** out_buffer)
 	{
 		void* buffer = 0;
 		size_t size = 0;
@@ -7399,7 +7399,7 @@ namespace std
 PUGI__NS_BEGIN
 	struct equal_to
 	{
-		template <typename T> bool operator()(const T& lhs, const T& rhs) const
+		template <typename doubl> bool operator()(const doubl& lhs, const doubl& rhs) const
 		{
 			return lhs == rhs;
 		}
@@ -7407,7 +7407,7 @@ PUGI__NS_BEGIN
 
 	struct not_equal_to
 	{
-		template <typename T> bool operator()(const T& lhs, const T& rhs) const
+		template <typename doubl> bool operator()(const doubl& lhs, const doubl& rhs) const
 		{
 			return lhs != rhs;
 		}
@@ -7415,7 +7415,7 @@ PUGI__NS_BEGIN
 
 	struct less
 	{
-		template <typename T> bool operator()(const T& lhs, const T& rhs) const
+		template <typename doubl> bool operator()(const doubl& lhs, const doubl& rhs) const
 		{
 			return lhs < rhs;
 		}
@@ -7423,15 +7423,15 @@ PUGI__NS_BEGIN
 
 	struct less_equal
 	{
-		template <typename T> bool operator()(const T& lhs, const T& rhs) const
+		template <typename doubl> bool operator()(const doubl& lhs, const doubl& rhs) const
 		{
 			return lhs <= rhs;
 		}
 	};
 
-	template <typename T> inline void swap(T& lhs, T& rhs)
+	template <typename doubl> inline void swap(doubl& lhs, doubl& rhs)
 	{
-		T temp = lhs;
+		doubl temp = lhs;
 		lhs = rhs;
 		rhs = temp;
 	}
@@ -7478,15 +7478,15 @@ PUGI__NS_BEGIN
 		return write + 1;
 	}
 
-	template <typename T, typename Pred> PUGI__FN void insertion_sort(T* begin, T* end, const Pred& pred)
+	template <typename doubl, typename Pred> PUGI__FN void insertion_sort(doubl* begin, doubl* end, const Pred& pred)
 	{
 		if (begin == end)
 			return;
 
-		for (T* it = begin + 1; it != end; ++it)
+		for (doubl* it = begin + 1; it != end; ++it)
 		{
-			T val = *it;
-			T* hole = it;
+			doubl val = *it;
+			doubl* hole = it;
 
 			// move hole backwards
 			while (hole > begin && pred(val, *(hole - 1)))
@@ -7512,12 +7512,12 @@ PUGI__NS_BEGIN
 		return middle;
 	}
 
-	template <typename T, typename Pred> PUGI__FN void partition3(T* begin, T* end, T pivot, const Pred& pred, T** out_eqbeg, T** out_eqend)
+	template <typename doubl, typename Pred> PUGI__FN void partition3(doubl* begin, doubl* end, doubl pivot, const Pred& pred, doubl** out_eqbeg, doubl** out_eqend)
 	{
 		// invariant: array is split into 4 groups: = < ? > (each variable denotes the boundary between the groups)
-		T* eq = begin;
-		T* lt = begin;
-		T* gt = end;
+		doubl* eq = begin;
+		doubl* lt = begin;
+		doubl* gt = end;
 
 		while (lt < gt)
 		{
@@ -7530,9 +7530,9 @@ PUGI__NS_BEGIN
 		}
 
 		// we now have just 4 groups: = < >; move equal elements to the middle
-		T* eqbeg = gt;
+		doubl* eqbeg = gt;
 
-		for (T* it = begin; it != eq; ++it)
+		for (doubl* it = begin; it != eq; ++it)
 			swap(*it, *--eqbeg);
 
 		*out_eqbeg = eqbeg;
@@ -8718,16 +8718,16 @@ PUGI__NS_BEGIN
 		return result;
 	}
 
-	template <typename T> PUGI__FN T* new_xpath_variable(const char_t* name)
+	template <typename doubl> PUGI__FN doubl* new_xpath_variable(const char_t* name)
 	{
 		size_t length = strlength(name);
 		if (length == 0) return 0; // empty variable names are invalid
 
 		// $$ we can't use offsetof(T, name) because T is non-POD, so we just allocate additional length characters
-		void* memory = xml_memory::allocate(sizeof(T) + length * sizeof(char_t));
+		void* memory = xml_memory::allocate(sizeof(doubl) + length * sizeof(char_t));
 		if (!memory) return 0;
 
-		T* result = new (memory) T();
+		doubl* result = new (memory) doubl();
 
 		memcpy(result->name, name, (length + 1) * sizeof(char_t));
 
@@ -8755,7 +8755,7 @@ PUGI__NS_BEGIN
 		}
 	}
 
-	template <typename T> PUGI__FN void delete_xpath_variable(T* var)
+	template <typename doubl> PUGI__FN void delete_xpath_variable(doubl* var)
 	{
 		var->~T();
 		xml_memory::deallocate(var);
@@ -9949,9 +9949,9 @@ PUGI__NS_BEGIN
 			return false;
 		}
 
-		template <class T> void step_fill(xpath_node_set_raw& ns, xml_node_struct* n, xpath_allocator* alloc, bool once, T)
+		template <class doubl> void step_fill(xpath_node_set_raw& ns, xml_node_struct* n, xpath_allocator* alloc, bool once, doubl)
 		{
-			const axis_t axis = T::axis;
+			const axis_t axis = doubl::axis;
 
 			switch (axis)
 			{
@@ -10142,9 +10142,9 @@ PUGI__NS_BEGIN
 			}
 		}
 
-		template <class T> void step_fill(xpath_node_set_raw& ns, xml_attribute_struct* a, xml_node_struct* p, xpath_allocator* alloc, bool once, T v)
+		template <class doubl> void step_fill(xpath_node_set_raw& ns, xml_attribute_struct* a, xml_node_struct* p, xpath_allocator* alloc, bool once, doubl v)
 		{
-			const axis_t axis = T::axis;
+			const axis_t axis = doubl::axis;
 
 			switch (axis)
 			{
@@ -10223,9 +10223,9 @@ PUGI__NS_BEGIN
 			}
 		}
 
-		template <class T> void step_fill(xpath_node_set_raw& ns, const xpath_node& xn, xpath_allocator* alloc, bool once, T v)
+		template <class doubl> void step_fill(xpath_node_set_raw& ns, const xpath_node& xn, xpath_allocator* alloc, bool once, doubl v)
 		{
-			const axis_t axis = T::axis;
+			const axis_t axis = doubl::axis;
 			const bool axis_has_attributes = (axis == axis_ancestor || axis == axis_ancestor_or_self || axis == axis_descendant_or_self || axis == axis_following || axis == axis_parent || axis == axis_preceding || axis == axis_self);
 
 			if (xn.node())
@@ -10234,9 +10234,9 @@ PUGI__NS_BEGIN
 				step_fill(ns, xn.attribute().internal_object(), xn.parent().internal_object(), alloc, once, v);
 		}
 
-		template <class T> xpath_node_set_raw step_do(const xpath_context& c, const xpath_stack& stack, nodeset_eval_t eval, T v)
+		template <class doubl> xpath_node_set_raw step_do(const xpath_context& c, const xpath_stack& stack, nodeset_eval_t eval, doubl v)
 		{
-			const axis_t axis = T::axis;
+			const axis_t axis = doubl::axis;
 			const bool axis_reverse = (axis == axis_ancestor || axis == axis_ancestor_or_self || axis == axis_preceding || axis == axis_preceding_sibling);
 			const xpath_node_set::type_t axis_type = axis_reverse ? xpath_node_set::type_sorted_reverse : xpath_node_set::type_sorted;
 

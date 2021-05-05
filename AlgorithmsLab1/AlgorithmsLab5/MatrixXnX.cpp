@@ -110,6 +110,19 @@ void MatrixXnX::Transpose()
 		}
 }
 
+std::vector<double> MatrixXnX::operator*(const std::vector<double>& v) const
+{
+	if (GetDim() != v.size())
+		throw std::logic_error("Dimensions are not equal.");
+
+	std::vector<double> result(v.size(), 0.0);
+	for (uint32_t i = 0; i < GetDim(); ++i)
+		for (uint32_t j = 0; j < GetDim(); ++j)
+			result[i] += Element(i, j) * v[j];
+
+	return result;
+}
+
 void MatrixXnX::Copy(const MatrixXnX& src)
 {
 	for (uint32_t i = 0; i < dim; i++)

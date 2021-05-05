@@ -4,21 +4,39 @@
 
 int main()
 {
-    MatrixXnX m(3);
-    m.SetElement(0, 0, 1);
-    m.SetElement(0, 1, 2);
-    m.SetElement(0, 2, 3);
-    m.SetElement(1, 0, 4);
-    m.SetElement(1, 1, 34);
-    m.SetElement(1, 2, 6);
-    m.SetElement(2, 0, 7);
-    m.SetElement(2, 1, 12);
-    m.SetElement(2, 2, 45);
+    std::cout << "Enter the dimension of the quadratic system of equations: ";
+    uint32_t dim;
+    std::cin >> dim;
+    if (dim == 0) return 0;
+    MatrixXnX matr(dim);
+    std::vector<double> freeMembers(dim);
 
-    std::cout << m << '\n';
-    std::cout << m.Determinant() << '\n';
+    for(uint32_t i = 0; i < dim; ++i)
+    {
+        double e;
+        std::cout << "equation " << i << ":\n";
+        for (uint32_t j = 0; j < dim; ++j)
+        {
+            std::cout << 'x' << j << " = ";
+            std::cin >> e;
+            matr.SetElement(i, j, e);
+        }
+        std::cout << "free member " << i << " = ";
+        std::cin >> e;
+        freeMembers[i] = e;
+    }
+    std::cout << '\n';
 
-    std::cout << m.InverseMatrix() << '\n';
+    auto invMatr = matr.InverseMatrix();
+    if (invMatr.GetDim() == 0)
+    {
+        std::cout << "no solutions\n";
+        return 1;
+    }
+
+    auto vectorUnknowns = invMatr * freeMembers;
+    for(uint32_t i = 0; i < vectorUnknowns.size(); i++)
+        std::cout << 'x' << i << " = " << vectorUnknowns[i] << '\n';
     return 0;
 }
 

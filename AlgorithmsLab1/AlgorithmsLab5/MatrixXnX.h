@@ -1,5 +1,6 @@
 #pragma once
 #include <ostream>
+#include <vector>
 class MatrixXnX
 {
 public:
@@ -29,9 +30,10 @@ public:
 
 	void Transpose();
 
+	std::vector<double> operator*(const std::vector<double>& v) const;
 private:
-	double* elems;
-	uint32_t dim;
+	double* elems = nullptr;
+	uint32_t dim = 0;
 	void Copy(const MatrixXnX& src);
 };
 

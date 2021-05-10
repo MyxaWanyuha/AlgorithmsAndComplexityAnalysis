@@ -620,15 +620,16 @@ int64_t BigInt::ToInt64() const
     return std::stoll(this->ToString());
 }
 
-BigInt BigInt::Pow(const BigInt& base, BigInt& exp)
+BigInt BigInt::Pow(const BigInt& base, const BigInt& exp)
 {
-    if (exp < 0)
+    BigInt exp1(exp);
+    if (exp1 < 0)
     {
         if (base == Zero)
             throw std::logic_error("Cannot divide by zero");
         return abs(base) == 1 ? base : 0;
     }
-    if (exp == 0)
+    if (exp1 == 0)
     {
         if (base == Zero)
             throw std::logic_error("Zero cannot be raised to zero");
@@ -636,12 +637,12 @@ BigInt BigInt::Pow(const BigInt& base, BigInt& exp)
     }
 
     BigInt result = base, result_odd = 1;
-    while (exp > 1)
+    while (exp1 > 1)
     {
-        if (exp % 2 != 0)
+        if (exp1 % 2 != 0)
             result_odd *= result;
         result *= result;
-        exp /= BigInt(2);
+        exp1 /= BigInt(2);
     }
 
     return result * result_odd;

@@ -46,6 +46,8 @@ void MatrixXnX::SetElement(const uint32_t i, const uint32_t j, const double valu
 
 MatrixXnX MatrixXnX::GetMatrixWithoutStrCol(uint32_t str, uint32_t col) const
 {
+	if (str >= dim || col >= dim)
+		throw std::exception("Out of range");
 	MatrixXnX submatrix(GetDim() - 1);
 	uint32_t subi = 0;
 	for (uint32_t i = 0; i < GetDim(); i++)
